@@ -5,6 +5,7 @@
 
 package com.microsoft.azure.toolkit.lib.legacy.function.handlers;
 
+import com.micsrosoft.azure.functions.sdktype.*;
 import com.microsoft.azure.toolkit.lib.appservice.function.core.FunctionAnnotation;
 import com.microsoft.azure.toolkit.lib.appservice.function.core.FunctionMethod;
 import com.microsoft.azure.toolkit.lib.appservice.function.impl.DefaultFunctionProject;
@@ -100,6 +101,12 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         processMethodAnnotations(method, bindings);
 
         patchStorageBinding(method, bindings);
+
+        SdkParameterAnalyzer analyzer = new SdkParameterAnalyzer();
+        SdkParameterAnalysisResult result = analyzer.analyze(method);
+        if(result.hasAnySdkTypes()){
+            bindings.forEach(binding -> binding.setAttribute("properties", "supportsDefferedBings: true"));
+        }
 
         config.setRetry(getRetryConfigurationFromMethod(method));
         config.setEntryPoint(method.getDeclaringClass().getCanonicalName() + "." + method.getName());

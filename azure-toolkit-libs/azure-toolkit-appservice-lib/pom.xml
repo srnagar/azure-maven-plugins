@@ -117,6 +117,12 @@
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-toolkit-servicelinker-lib</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure.functions</groupId>
+            <artifactId>azure-functions-java-sdktypes</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
