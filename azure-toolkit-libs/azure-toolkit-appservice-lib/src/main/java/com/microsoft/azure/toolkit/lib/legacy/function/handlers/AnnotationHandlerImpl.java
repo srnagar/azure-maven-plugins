@@ -5,7 +5,10 @@
 
 package com.microsoft.azure.toolkit.lib.legacy.function.handlers;
 
-import com.micsrosoft.azure.functions.sdktype.*;
+import com.microsoft.azure.functions.sdktype.SdkType;
+import com.microsoft.azure.functions.sdktype.SdkParameterAnalyzer;
+import com.microsoft.azure.functions.sdktype.SdkParameterAnalysisResult;
+import com.microsoft.azure.functions.sdktype.SdkTypeMetaData;
 import com.microsoft.azure.toolkit.lib.appservice.function.core.FunctionAnnotation;
 import com.microsoft.azure.toolkit.lib.appservice.function.core.FunctionMethod;
 import com.microsoft.azure.toolkit.lib.appservice.function.impl.DefaultFunctionProject;
@@ -30,6 +33,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,15 +106,6 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
 
         patchStorageBinding(method, bindings);
 
-        SdkParameterAnalyzer analyzer = new SdkParameterAnalyzer();
-        SdkParameterAnalysisResult result = analyzer.analyze(method);
-        if(result.hasAnySdkTypes()){
-            Map<String, String> props = new HashMap<>();
-            props.put("supportsDeferredBinding", "true");
-            binding.setAttribute("properties", props);
-            bindings.forEach(binding -> binding.setAttribute("properties", props));
-        }
-
         config.setRetry(getRetryConfigurationFromMethod(method));
         config.setEntryPoint(method.getDeclaringClass().getCanonicalName() + "." + method.getName());
         return config;
@@ -133,8 +128,21 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
     }
 
     protected void processParameterAnnotations(final Method method, final List<Binding> bindings) {
+        SdkParameterAnalyzer analyzer = new SdkParameterAnalyzer();
+        SdkParameterAnalysisResult result = analyzer.analyze(method);
+        Set<Parameter> sdkTypeParams = new HashSet<>();
+        for (final SdkTypeMetaData sdkTypeMetaData : result.getSdkTypes()) {
+            sdkTypeParams.add(sdkTypeMetaData.getParam());
+        }
+
         for (final Parameter param : method.getParameters()) {
             bindings.addAll(parseAnnotations(param::getAnnotations, this::parseParameterAnnotation));
+
+            if (sdkTypeParams.contains(param)) {
+                Map<String, String> props = new HashMap<>();
+                props.put("supportsDeferredBinding", "true");
+                bindings.forEach(binding -> binding.setAttribute("properties", props));
+            }
         }
     }
 
