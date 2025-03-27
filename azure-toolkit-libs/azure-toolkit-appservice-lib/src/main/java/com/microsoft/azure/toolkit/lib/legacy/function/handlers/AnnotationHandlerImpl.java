@@ -105,7 +105,10 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         SdkParameterAnalyzer analyzer = new SdkParameterAnalyzer();
         SdkParameterAnalysisResult result = analyzer.analyze(method);
         if(result.hasAnySdkTypes()){
-            bindings.forEach(binding -> binding.setAttribute("properties", "supportsDefferedBings: true"));
+            Map<String, String> props = new HashMap<>();
+            props.put("supportsDeferredBinding", "true");
+            binding.setAttribute("properties", props);
+            bindings.forEach(binding -> binding.setAttribute("properties", props));
         }
 
         config.setRetry(getRetryConfigurationFromMethod(method));
