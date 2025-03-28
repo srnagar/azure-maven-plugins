@@ -131,7 +131,7 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         SdkParameterAnalyzer analyzer = new SdkParameterAnalyzer();
         SdkParameterAnalysisResult result = analyzer.analyze(method);
         Set<Parameter> sdkTypeParams = new HashSet<>();
-        for (final SdkTypeMetaData sdkTypeMetaData : result.getSdkTypes()) {
+        for (final SdkTypeMetaData sdkTypeMetaData : result.getSdkTypesMetaData()) {
             sdkTypeParams.add(sdkTypeMetaData.getParam());
         }
 
