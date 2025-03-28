@@ -46,7 +46,7 @@ public class WebAppLinuxRuntime implements WebAppRuntime {
     public static final WebAppLinuxRuntime TOMCAT10_JAVA17 = new WebAppLinuxRuntime("TOMCAT|10.0-java17", "Java 17");
     public static final WebAppLinuxRuntime TOMCAT10_JAVA11 = new WebAppLinuxRuntime("TOMCAT|10.0-java11", "Java 11");
     public static final WebAppLinuxRuntime TOMCAT10_JAVA8 = new WebAppLinuxRuntime("TOMCAT|10.0-jre8", "Java 1.8");
-    public static final WebAppLinuxRuntime TOMCAT9_JAVA21 = new WebAppLinuxRuntime("TOMCAT|9.0-java21", "Java 17");
+    public static final WebAppLinuxRuntime TOMCAT9_JAVA21 = new WebAppLinuxRuntime("TOMCAT|9.0-java21", "Java 21");
     public static final WebAppLinuxRuntime TOMCAT9_JAVA17 = new WebAppLinuxRuntime("TOMCAT|9.0-java17", "Java 17");
     public static final WebAppLinuxRuntime TOMCAT9_JAVA11 = new WebAppLinuxRuntime("TOMCAT|9.0-java11", "Java 11");
     public static final WebAppLinuxRuntime TOMCAT9_JAVA8 = new WebAppLinuxRuntime("TOMCAT|9.0-jre8", "Java 1.8");
