@@ -136,13 +136,14 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         }
 
         for (final Parameter param : method.getParameters()) {
-            bindings.addAll(parseAnnotations(param::getAnnotations, this::parseParameterAnnotation));
-
+            List<Binding> paramBindings = parseAnnotations(param::getAnnotations, this::parseParameterAnnotation);
             if (sdkTypeParams.contains(param)) {
                 Map<String, String> props = new HashMap<>();
                 props.put("supportsDeferredBinding", "true");
-                bindings.forEach(binding -> binding.setAttribute("properties", props));
+                paramBindings.forEach(binding -> binding.setAttribute("properties", props));
             }
+
+            bindings.addAll(paramBindings);
         }
     }
 
