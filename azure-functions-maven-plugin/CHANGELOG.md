@@ -1,6 +1,7 @@
 # Change Log
 All notable changes to the "Maven Plugin for Azure Function" will be documented in this file.
 - [Change Log](#change-log)
+  - [1.38.0](#1380)
   - [1.37.0](#1370)
   - [1.36.0](#1360)
   - [1.35.0](#1350)
@@ -29,6 +30,9 @@ All notable changes to the "Maven Plugin for Azure Function" will be documented 
   - [1.2.2](#122)
   - [1.2.1](#121)
   - [1.2.0](#120)
+
+## 1.38.0
+- Support "Sdk Types" in functions maven plugin
 
 ## 1.37.1
 - Refactor the logic for flex consumption deployment, fixes #2519
