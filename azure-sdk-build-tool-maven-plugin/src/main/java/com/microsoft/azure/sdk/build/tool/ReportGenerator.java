@@ -80,7 +80,7 @@ public class ReportGenerator {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] digest = md.digest(inputText.getBytes(StandardCharsets.UTF_8));
-            return String.format("%032x", new BigInteger(1, digest));
+            return String.format("%064x", new BigInteger(1, digest));
         } catch (NoSuchAlgorithmException exception) {
             return "Unknown";
         }
