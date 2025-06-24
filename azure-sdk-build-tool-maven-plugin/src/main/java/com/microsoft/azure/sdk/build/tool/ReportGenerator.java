@@ -7,8 +7,8 @@ import com.azure.core.util.BinaryData;
 import com.microsoft.azure.sdk.build.tool.models.BuildReport;
 import com.microsoft.azure.sdk.build.tool.mojo.AzureSdkMojo;
 import com.microsoft.azure.sdk.build.tool.util.MavenUtils;
-import com.microsoft.azure.sdk.build.tool.util.logging.Logger;
 import com.microsoft.azure.sdk.build.tool.util.MojoUtils;
+import com.microsoft.azure.sdk.build.tool.util.logging.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -78,9 +78,9 @@ public class ReportGenerator {
 
     private String getMd5(String inputText) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] digest = md.digest(inputText.getBytes(StandardCharsets.UTF_8));
-            return String.format("%032x", new BigInteger(1, digest));
+            return String.format("%064x", new BigInteger(1, digest));
         } catch (NoSuchAlgorithmException exception) {
             return "Unknown";
         }
@@ -88,4 +88,3 @@ public class ReportGenerator {
     }
 
 }
-
