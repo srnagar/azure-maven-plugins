@@ -36,7 +36,7 @@ public interface FunctionAppRuntime extends Runtime {
     static FunctionAppRuntime getDefault() {
         // use static method instead of constant to avoid cyclic dependency
         // https://stackoverflow.com/questions/41016957/java-interface-static-variable-is-not-initialized
-        return FunctionAppWindowsRuntime.FUNCTION_JAVA17;
+        return FunctionAppLinuxRuntime.FUNCTION_JAVA21;
     }
 
     static List<FunctionAppRuntime> getMajorRuntimes() {
