@@ -134,7 +134,7 @@ public class AppServiceConfig {
             .os(defaultRuntime.getOperatingSystem())
             .javaVersion(defaultRuntime.getJavaVersionUserText());
         result.runtime(runtimeConfig);
-        result.pricingTier(PricingTier.CONSUMPTION);
+        result.pricingTier(PricingTier.FLEX_CONSUMPTION);
         result.flexConsumptionConfiguration(FlexConsumptionConfiguration.DEFAULT_CONFIGURATION);
         return result;
     }
