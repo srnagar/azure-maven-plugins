@@ -31,6 +31,9 @@ All notable changes to the "Maven Plugin for Azure Function" will be documented 
   - [1.2.1](#121)
   - [1.2.0](#120)
 
+## 1.39.0
+- Change default pricing tier to `Flex Consumption`
+
 ## 1.38.0
 - Support "Sdk Types" in functions maven plugin
 
