@@ -105,7 +105,7 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         processMethodAnnotations(method, bindings);
 
         // Process MCP annotations (McpToolTrigger and McpToolProperty)
-        McpAnnotationProcessor.processMcpAnnotations(method, bindings);
+        McpAnnotationProcessor.processMcpAnnotations(bindings);
 
         patchStorageBinding(method, bindings);
 
