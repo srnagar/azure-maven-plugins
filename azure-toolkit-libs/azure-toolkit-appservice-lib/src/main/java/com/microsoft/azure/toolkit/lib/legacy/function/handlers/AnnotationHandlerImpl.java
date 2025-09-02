@@ -52,8 +52,6 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
     private static final String MULTI_RETRY_ANNOTATION = "Fixed delay retry and exponential backoff retry are not compatible, " +
         "please use either of them for one trigger";
 
-    private final McpAnnotationProcessor mcpProcessor = new McpAnnotationProcessor();
-
     @Override
     public Set<Method> findFunctions(final List<URL> urls) {
         try {
@@ -107,7 +105,7 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         processMethodAnnotations(method, bindings);
 
         // Process MCP annotations (McpToolTrigger and McpToolProperty)
-        mcpProcessor.processMcpAnnotations(method, bindings);
+        McpAnnotationProcessor.processMcpAnnotations(method, bindings);
 
         patchStorageBinding(method, bindings);
 

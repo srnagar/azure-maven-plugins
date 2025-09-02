@@ -31,6 +31,13 @@ import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunc
 public class McpAnnotationProcessor {
 
     /**
+     * Private constructor to prevent instantiation of utility class.
+     */
+    private McpAnnotationProcessor() {
+        // Utility class - no instances allowed
+    }
+
+    /**
      * Processes all MCP-related annotations for a given method and updates the bindings accordingly.
      * This performs patching of individual bindings and generation of toolProperties in two passes:
      * 1. First processes all McpToolProperty bindings to collect their attributes (excluding 'name')
@@ -41,7 +48,7 @@ public class McpAnnotationProcessor {
      * @param method the method to process
      * @param bindings the list of bindings to update
      */
-    public void processMcpAnnotations(final Method method, final List<Binding> bindings) {
+    public static void processMcpAnnotations(final Method method, final List<Binding> bindings) {
         // First pass: Process ALL McpToolProperty bindings and collect their attributes
         final List<Map<String, Object>> allProperties = new ArrayList<>();
         for (final Binding binding : bindings) {
@@ -76,7 +83,7 @@ public class McpAnnotationProcessor {
     /**
      * Patches McpToolTrigger binding by finding the corresponding parameter and extracting attributes.
      */
-    private void patchMcpToolTriggerFromMethod(final Method method, final Binding binding) {
+    private static void patchMcpToolTriggerFromMethod(final Method method, final Binding binding) {
         final Parameter param = findParameterForBinding(method, binding, MCP_TOOL_TRIGGER);
         if (param != null) {
             patchMcpToolTrigger(param, binding);
@@ -86,7 +93,7 @@ public class McpAnnotationProcessor {
     /**
      * Patches McpToolProperty binding by finding the corresponding parameter and extracting attributes.
      */
-    private void patchMcpToolPropertyFromMethod(final Method method, final Binding binding) {
+    private static void patchMcpToolPropertyFromMethod(final Method method, final Binding binding) {
         final Parameter param = findParameterForBinding(method, binding, MCP_TOOL_PROPERTY);
         if (param != null) {
             patchMcpToolProperty(param, binding);
@@ -103,7 +110,7 @@ public class McpAnnotationProcessor {
      * @param expectedAnnotationType the annotation type we're looking for
      * @return the matching parameter, or null if not found
      */
-    private Parameter findParameterForBinding(final Method method, final Binding binding, final String expectedAnnotationType) {
+    private static Parameter findParameterForBinding(final Method method, final Binding binding, final String expectedAnnotationType) {
         for (final Parameter param : method.getParameters()) {
             for (final Annotation annotation : param.getAnnotations()) {
                 if (expectedAnnotationType.equals(annotation.annotationType().getName())) {
@@ -135,7 +142,7 @@ public class McpAnnotationProcessor {
      * @param param the parameter with the annotation
      * @param binding the binding to update
      */
-    private void patchMcpToolTrigger(final Parameter param, final Binding binding) {
+    private static void patchMcpToolTrigger(final Parameter param, final Binding binding) {
         final String name = getAnnotationAttribute(param, MCP_TOOL_TRIGGER, "name");
         if (name != null && !name.isEmpty()) {
             binding.setAttribute("toolName", name);
@@ -149,7 +156,7 @@ public class McpAnnotationProcessor {
      * @param param the parameter with the annotation
      * @param binding the binding to update
      */
-    private void patchMcpToolProperty(final Parameter param, final Binding binding) {
+    private static void patchMcpToolProperty(final Parameter param, final Binding binding) {
         final String name = getAnnotationAttribute(param, MCP_TOOL_PROPERTY, "name");
         if (name != null && !name.isEmpty()) {
             binding.setAttribute("propertyName", name);
@@ -165,7 +172,7 @@ public class McpAnnotationProcessor {
      * @param attributeName the name of the attribute to extract
      * @return the attribute value as a string, or null if not found or on error
      */
-    private String getAnnotationAttribute(final Parameter param, final String annotationType, final String attributeName) {
+    private static String getAnnotationAttribute(final Parameter param, final String annotationType, final String attributeName) {
         try {
             for (final Annotation annotation : param.getAnnotations()) {
                 if (annotationType.equals(annotation.annotationType().getName())) {
