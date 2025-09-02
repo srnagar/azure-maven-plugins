@@ -23,15 +23,20 @@ import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunc
 /**
  * Processor for handling MCP (Model Context Protocol) annotations in Azure Functions.
  * This class is responsible for processing McpToolTrigger and McpToolProperty annotations
- * and generating the appropriate binding configurations.
+ * and generating the appropriate binding configurations for function.json.
+ * 
+ * McpToolTrigger annotations define tool invocation triggers with a toolName.
+ * McpToolProperty annotations define tool properties that are aggregated into toolProperties JSON.
  */
 public class McpAnnotationProcessor {
 
     /**
      * Processes all MCP-related annotations for a given method and updates the bindings accordingly.
      * This performs patching of individual bindings and generation of toolProperties in two passes:
-     * 1. First processes all McpToolProperty bindings to collect their attributes
-     * 2. Then processes all McpToolTrigger bindings and sets their toolProperties
+     * 1. First processes all McpToolProperty bindings to collect their attributes (excluding 'name')
+     * 2. Then processes all McpToolTrigger bindings and sets their toolProperties with collected data
+     * 
+     * Assumes each method has at most one McpToolTrigger that receives all McpToolProperty data.
      *
      * @param method the method to process
      * @param bindings the list of bindings to update
@@ -89,7 +94,14 @@ public class McpAnnotationProcessor {
     }
 
     /**
-     * Finds the parameter that corresponds to a binding by checking annotations.
+     * Finds the parameter that corresponds to a binding by matching annotation types and names.
+     * This method searches through method parameters to find the one with the matching annotation
+     * that would have generated the given binding.
+     * 
+     * @param method the method containing the parameters
+     * @param binding the binding to find the parameter for
+     * @param expectedAnnotationType the annotation type we're looking for
+     * @return the matching parameter, or null if not found
      */
     private Parameter findParameterForBinding(final Method method, final Binding binding, final String expectedAnnotationType) {
         for (final Parameter param : method.getParameters()) {
@@ -117,7 +129,11 @@ public class McpAnnotationProcessor {
     }
 
     /**
-     * Patches McpToolTrigger binding with toolName extracted from the 'name' attribute.
+     * Extracts the 'name' attribute from an McpToolTrigger annotation and sets it as 'toolName' 
+     * on the binding for function.json generation.
+     * 
+     * @param param the parameter with the annotation
+     * @param binding the binding to update
      */
     private void patchMcpToolTrigger(final Parameter param, final Binding binding) {
         final String name = getAnnotationAttribute(param, MCP_TOOL_TRIGGER, "name");
@@ -127,7 +143,11 @@ public class McpAnnotationProcessor {
     }
 
     /**
-     * Patches McpToolProperty binding with propertyName extracted from the 'name' attribute.
+     * Extracts the 'name' attribute from an McpToolProperty annotation and sets it as 'propertyName' 
+     * on the binding. Note: Does NOT set 'toolName' on property bindings.
+     * 
+     * @param param the parameter with the annotation
+     * @param binding the binding to update
      */
     private void patchMcpToolProperty(final Parameter param, final Binding binding) {
         final String name = getAnnotationAttribute(param, MCP_TOOL_PROPERTY, "name");
@@ -137,7 +157,13 @@ public class McpAnnotationProcessor {
     }
 
     /**
-     * Safely extracts an attribute value from an annotation on a parameter.
+     * Safely extracts an attribute value from an annotation using reflection.
+     * Handles exceptions gracefully by logging warnings instead of failing the build.
+     * 
+     * @param param the parameter containing the annotation
+     * @param annotationType the full class name of the annotation type
+     * @param attributeName the name of the attribute to extract
+     * @return the attribute value as a string, or null if not found or on error
      */
     private String getAnnotationAttribute(final Parameter param, final String annotationType, final String attributeName) {
         try {
