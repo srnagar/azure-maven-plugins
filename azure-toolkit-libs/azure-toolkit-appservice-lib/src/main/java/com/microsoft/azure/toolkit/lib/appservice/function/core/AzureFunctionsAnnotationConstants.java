@@ -9,6 +9,8 @@ public class AzureFunctionsAnnotationConstants {
     public static final String FUNCTION_NAME = "com.microsoft.azure.functions.annotation.FunctionName";
     public static final String STORAGE_ACCOUNT = "com.microsoft.azure.functions.annotation.StorageAccount";
     public static final String CUSTOM_BINDING = "com.microsoft.azure.functions.annotation.CustomBinding";
+    public static final String MCP_TOOL_TRIGGER = "com.microsoft.azure.functions.annotation.McpToolTrigger";
+    public static final String MCP_TOOL_PROPERTY = "com.microsoft.azure.functions.annotation.McpToolProperty";
     public static final String FIXED_DELAY_RETRY = "com.microsoft.azure.functions.annotation.FixedDelayRetry";
     public static final String EXPONENTIAL_BACKOFF_RETRY = "com.microsoft.azure.functions.annotation.ExponentialBackoffRetry";
 
