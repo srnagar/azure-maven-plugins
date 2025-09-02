@@ -13,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,61 +29,40 @@ public class McpAnnotationProcessor {
 
     /**
      * Processes all MCP-related annotations for a given method and updates the bindings accordingly.
-     * This performs both patching of individual bindings and generation of toolProperties.
+     * This performs patching of individual bindings and generation of toolProperties in two passes:
+     * 1. First processes all McpToolProperty bindings to collect their attributes
+     * 2. Then processes all McpToolTrigger bindings and sets their toolProperties
      *
      * @param method the method to process
      * @param bindings the list of bindings to update
      */
     public void processMcpAnnotations(final Method method, final List<Binding> bindings) {
-        // First pass: Patch all MCP bindings with their respective attributes
+        // First pass: Process ALL McpToolProperty bindings and collect their attributes
+        final List<Map<String, Object>> allProperties = new ArrayList<>();
+        for (final Binding binding : bindings) {
+            if (binding.getBindingEnum() == BindingEnum.McpToolProperty) {
+                patchMcpToolPropertyFromMethod(method, binding);
+                
+                // Create a filtered map excluding 'name' attribute for toolProperties
+                final Map<String, Object> propertyAttributes = new HashMap<>();
+                final Map<String, Object> bindingAttributes = binding.getBindingAttributes();
+                for (Map.Entry<String, Object> entry : bindingAttributes.entrySet()) {
+                    if (!"name".equals(entry.getKey())) {
+                        propertyAttributes.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                allProperties.add(propertyAttributes);
+            }
+        }
+        
+        // Second pass: Process ALL McpToolTrigger bindings and set their toolProperties
         for (final Binding binding : bindings) {
             if (binding.getBindingEnum() == BindingEnum.McpToolTrigger) {
                 patchMcpToolTriggerFromMethod(method, binding);
-            } else if (binding.getBindingEnum() == BindingEnum.McpToolProperty) {
-                patchMcpToolPropertyFromMethod(method, binding);
-            }
-        }
-        
-        // Second pass: Generate toolProperties for the trigger
-        generateToolProperties(bindings);
-    }
-
-    /**
-     * Processes MCP bindings for a specific parameter during parameter processing.
-     * This is called from within the parameter processing loop.
-     */
-    public void processMcpBindingsForParameter(final Parameter param, final List<Binding> paramBindings) {
-        for (final Binding binding : paramBindings) {
-            if (binding.getBindingEnum() == BindingEnum.McpToolTrigger) {
-                patchMcpToolTrigger(param, binding);
-            } else if (binding.getBindingEnum() == BindingEnum.McpToolProperty) {
-                patchMcpToolProperty(param, binding);
-            }
-        }
-    }
-
-    /**
-     * Generates toolProperties for all McpToolTrigger bindings after all parameters have been processed.
-     * Assumes that each method has only one McpToolTrigger and all McpToolProperty bindings belong to it.
-     */
-    public void generateToolProperties(final List<Binding> bindings) {
-        // Find all McpToolProperty bindings in this method
-        final List<Map<String, Object>> allProperties = new ArrayList<>();
-        
-        for (final Binding binding : bindings) {
-            if (binding.getBindingEnum() == BindingEnum.McpToolProperty) {
-                allProperties.add(binding.getBindingAttributes());
-            }
-        }
-        
-        // If we have properties, set them on the McpToolTrigger
-        if (!allProperties.isEmpty()) {
-            for (final Binding binding : bindings) {
-                if (binding.getBindingEnum() == BindingEnum.McpToolTrigger) {
+                
+                if (!allProperties.isEmpty()) {
                     final String toolPropertiesJson = JsonUtils.toJson(allProperties);
                     binding.setAttribute("toolProperties", toolPropertiesJson);
-                    // Assuming only one trigger per method, we can break after setting it
-                    break;
                 }
             }
         }
@@ -147,12 +127,11 @@ public class McpAnnotationProcessor {
     }
 
     /**
-     * Patches McpToolProperty binding with toolName and propertyName extracted from the 'name' attribute.
+     * Patches McpToolProperty binding with propertyName extracted from the 'name' attribute.
      */
     private void patchMcpToolProperty(final Parameter param, final Binding binding) {
         final String name = getAnnotationAttribute(param, MCP_TOOL_PROPERTY, "name");
         if (name != null && !name.isEmpty()) {
-            binding.setAttribute("toolName", name);
             binding.setAttribute("propertyName", name);
         }
     }
