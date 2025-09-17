@@ -287,6 +287,37 @@ public class McpAnnotationProcessorTest {
         assertEquals(2, toolProperties.size());
     }
 
+    @Test
+    public void testProcessMcpAnnotations_WithDuplicatePropertyNames_ShouldProcessGracefully() {
+        // Arrange - Two properties with the same name 
+        // Note: Duplicate validation now happens at AnnotationHandlerImpl level, not here
+        List<Binding> bindings = new ArrayList<>();
+        
+        Binding property1 = createMcpToolPropertyBinding("duplicateName", "value1");
+        property1.setAttribute("extraAttribute1", "extra1");
+        
+        Binding property2 = createMcpToolPropertyBinding("duplicateName", "value2");
+        property2.setAttribute("extraAttribute2", "extra2");
+        
+        Binding trigger = createMcpToolTriggerBinding("myTool");
+        
+        bindings.add(property1);
+        bindings.add(property2);
+        bindings.add(trigger);
+        
+        // Act - should process without throwing exception (validation happens at higher level)
+        McpAnnotationProcessor.processMcpAnnotations(bindings);
+        
+        // Assert - both properties should be processed and included in toolProperties
+        assertEquals("myTool", trigger.getAttribute("toolName"));
+        assertNotNull("toolProperties should be set", trigger.getAttribute("toolProperties"));
+        
+        // Both property attributes should be included in the JSON (excluding 'name')
+        String toolPropertiesJson = (String) trigger.getAttribute("toolProperties");
+        assertTrue("Should contain property1 attributes", toolPropertiesJson.contains("extra1"));
+        assertTrue("Should contain property2 attributes", toolPropertiesJson.contains("extra2"));
+    }
+
     // Helper methods to create test bindings
 
     private Binding createMcpToolPropertyBinding(String name, String customValue) {

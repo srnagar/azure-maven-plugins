@@ -18,4 +18,7 @@ public class AzureFunctionsAnnotationConstants {
     public static final String ANONYMOUS = "ANONYMOUS";
     public static final String FUNCTION = "FUNCTION";
     public static final String ADMIN = "ADMIN";
+
+    // System-reserved binding names (allowed to have duplicates)
+    public static final String SYSTEM_RETURN_BINDING_NAME = "$return";
 }
