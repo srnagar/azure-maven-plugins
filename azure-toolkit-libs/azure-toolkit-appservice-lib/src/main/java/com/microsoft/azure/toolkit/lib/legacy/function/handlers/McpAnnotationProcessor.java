@@ -8,6 +8,7 @@ package com.microsoft.azure.toolkit.lib.legacy.function.handlers;
 import com.microsoft.azure.toolkit.lib.common.utils.JsonUtils;
 import com.microsoft.azure.toolkit.lib.legacy.function.bindings.Binding;
 import com.microsoft.azure.toolkit.lib.legacy.function.bindings.BindingEnum;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class McpAnnotationProcessor {
      * This performs patching of individual bindings and generation of toolProperties in a single pass
      * for optimal performance.
      * 
-     * Note: Duplicate name validation is now handled at the function level by AnnotationHandlerImpl.
+     * Note: Duplicate name validation is handled at the function level by AnnotationHandlerImpl.
      * 
      * Assumes each method has at most one McpToolTrigger that receives all McpToolProperty data.
      * 
@@ -79,7 +80,7 @@ public class McpAnnotationProcessor {
      */
     private static void patchMcpToolTrigger(final Binding binding) {
         final String name = (String) binding.getAttribute("name");
-        if (isValidPropertyName(name)) {
+        if (StringUtils.isNotEmpty(name)) {
             binding.setAttribute("toolName", name);
         }
     }
@@ -92,7 +93,7 @@ public class McpAnnotationProcessor {
      */
     private static void patchMcpToolProperty(final Binding binding) {
         final String name = (String) binding.getAttribute("name");
-        if (isValidPropertyName(name)) {
+        if (StringUtils.isNotEmpty(name)) {
             binding.setAttribute("propertyName", name);
         }
     }
@@ -130,15 +131,5 @@ public class McpAnnotationProcessor {
         }
         
         return propertyAttributes;
-    }
-
-    /**
-     * Checks if a property name is valid (non-null and non-empty).
-     * 
-     * @param propertyName the property name to validate
-     * @return true if the property name is valid
-     */
-    private static boolean isValidPropertyName(final String propertyName) {
-        return propertyName != null && !propertyName.isEmpty();
     }
 }
