@@ -226,6 +226,13 @@
     "textCompletion_topP_help": "The top_p probability mass to consider.",
     "textCompletion_name_label": "Trigger binding name",
     "textCompletion_name_help": "Name used to identify trigger in code",
-    "textCompletion_name_errorText": "The name must start with a letter, and it can contain only letters and numbers. The name must be 1 to 127 characters."
+    "textCompletion_name_errorText": "The name must start with a letter, and it can contain only letters and numbers. The name must be 1 to 127 characters.",
+
+    "McpToolTrigger_description": "A function that creates an MCP Tool exposed through a MCP Server managed by the platform and triggers when an MCP Client calls the tool.",
+    "mcp_tool_trigger_displayName": "MCP Tool Trigger",
+    "mcp_tool_trigger_toolName_label": "MCP Tool Name",
+    "mcp_tool_trigger_toolName_help": "The name of the MCP Tool.",
+    "mcp_tool_trigger_toolDescription_label": "MCP Tool Description",
+    "mcp_tool_trigger_toolDescription_help": "A description of the MCP Tool's functionality."
   }
 }
