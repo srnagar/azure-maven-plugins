@@ -289,8 +289,7 @@ public class McpAnnotationProcessorTest {
 
     @Test
     public void testProcessMcpAnnotations_WithDuplicatePropertyNames_ShouldProcessGracefully() {
-        // Arrange - Two properties with the same name 
-        // Note: Duplicate validation now happens at AnnotationHandlerImpl level, not here
+        // Arrange - Two properties with the same name
         List<Binding> bindings = new ArrayList<>();
         
         Binding property1 = createMcpToolPropertyBinding("duplicateName", "value1");
