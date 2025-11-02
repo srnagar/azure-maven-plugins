@@ -28,6 +28,8 @@ public class Binding {
         //initialize required attributes, which will be saved to function.json even if it equals to its default value
         requiredAttributeMap.put(BindingEnum.EventHubTrigger, Collections.singletonList("cardinality"));
         requiredAttributeMap.put(BindingEnum.HttpTrigger, Collections.singletonList("authLevel"));
+        requiredAttributeMap.put(BindingEnum.McpToolProperty, Arrays.asList("isRequired", "description"));
+        requiredAttributeMap.put(BindingEnum.McpToolTrigger, Collections.singletonList("description"));
     }
 
     public Binding(BindingEnum bindingEnum) {

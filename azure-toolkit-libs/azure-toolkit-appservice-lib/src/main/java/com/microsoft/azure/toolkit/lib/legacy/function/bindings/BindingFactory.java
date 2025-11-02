@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.CUSTOM_BINDING;
+import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.SYSTEM_RETURN_BINDING_NAME;
 
 @Deprecated
 public class BindingFactory {
-    private static final String HTTP_OUTPUT_DEFAULT_NAME = "$return";
 
     public static Binding getBinding(final Annotation annotation) {
         final BindingEnum annotationEnum = Arrays.stream(BindingEnum.values())
@@ -35,7 +35,7 @@ public class BindingFactory {
 
     public static Binding getHTTPOutBinding() {
         final Binding result = new Binding(BindingEnum.HttpOutput);
-        result.setName(HTTP_OUTPUT_DEFAULT_NAME);
+        result.setName(SYSTEM_RETURN_BINDING_NAME);
         return result;
     }
 }

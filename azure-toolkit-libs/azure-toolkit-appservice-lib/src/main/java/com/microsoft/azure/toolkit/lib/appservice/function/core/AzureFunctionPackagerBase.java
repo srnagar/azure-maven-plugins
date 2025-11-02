@@ -30,6 +30,7 @@ import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunc
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.FIXED_DELAY_RETRY;
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.FUNCTION_NAME;
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.STORAGE_ACCOUNT;
+import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.SYSTEM_RETURN_BINDING_NAME;
 
 @Slf4j
 abstract class AzureFunctionPackagerBase {
@@ -37,7 +38,6 @@ abstract class AzureFunctionPackagerBase {
     private static final String MULTI_RETRY_ANNOTATION = "Fixed delay retry and exponential backoff retry are not compatible, " +
         "please use either of them for one trigger";
 
-    private static final String HTTP_OUTPUT_DEFAULT_NAME = "$return";
     private static final Map<BindingEnum, List<String>> REQUIRED_ATTRIBUTE_MAP = new HashMap<>();
 
     static {
@@ -96,7 +96,7 @@ abstract class AzureFunctionPackagerBase {
             bindings.addAll(parseAnnotations(method.getAnnotations(), this::parseMethodAnnotation));
 
             if (bindings.stream().anyMatch(b -> b.getBindingEnum() == BindingEnum.HttpTrigger) &&
-                bindings.stream().noneMatch(b -> b.getName().equalsIgnoreCase("$return"))) {
+                bindings.stream().noneMatch(b -> b.getName().equalsIgnoreCase(SYSTEM_RETURN_BINDING_NAME))) {
                 bindings.add(getHTTPOutBinding());
             }
         }
@@ -105,7 +105,7 @@ abstract class AzureFunctionPackagerBase {
     private Binding parseMethodAnnotation(final FunctionAnnotation annotation) {
         final Binding ret = parseParameterAnnotation(annotation);
         if (ret != null) {
-            ret.setName("$return");
+            ret.setName(SYSTEM_RETURN_BINDING_NAME);
         }
         return ret;
     }
@@ -194,7 +194,7 @@ abstract class AzureFunctionPackagerBase {
 
     private Binding getHTTPOutBinding() {
         final Binding result = new Binding(BindingEnum.HttpOutput);
-        result.setName(HTTP_OUTPUT_DEFAULT_NAME);
+        result.setName(SYSTEM_RETURN_BINDING_NAME);
         return result;
     }
 

@@ -44,6 +44,7 @@ import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunc
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.FIXED_DELAY_RETRY;
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.FUNCTION_NAME;
 import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.STORAGE_ACCOUNT;
+import static com.microsoft.azure.toolkit.lib.appservice.function.core.AzureFunctionsAnnotationConstants.SYSTEM_RETURN_BINDING_NAME;
 
 @Slf4j
 @Deprecated
@@ -104,7 +105,13 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
 
         processMethodAnnotations(method, bindings);
 
+        // Process MCP annotations (McpToolTrigger and McpToolProperty)
+        McpAnnotationProcessor.processMcpAnnotations(bindings);
+
         patchStorageBinding(method, bindings);
+
+        // Validate all bindings for duplicate names after all processing is complete
+        validateBindingNames(bindings);
 
         config.setRetry(getRetryConfigurationFromMethod(method));
         config.setEntryPoint(method.getDeclaringClass().getCanonicalName() + "." + method.getName());
@@ -152,7 +159,7 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
             bindings.addAll(parseAnnotations(method::getAnnotations, this::parseMethodAnnotation));
 
             if (bindings.stream().anyMatch(b -> b.getBindingEnum() == BindingEnum.HttpTrigger) &&
-                bindings.stream().noneMatch(b -> b.getName().equalsIgnoreCase("$return"))) {
+                bindings.stream().noneMatch(b -> b.getName().equalsIgnoreCase(SYSTEM_RETURN_BINDING_NAME))) {
                 bindings.add(BindingFactory.getHTTPOutBinding());
             }
         }
@@ -180,7 +187,7 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
     protected Binding parseMethodAnnotation(final Annotation annotation) {
         final Binding ret = parseParameterAnnotation(annotation);
         if (ret != null) {
-            ret.setName("$return");
+            ret.setName(SYSTEM_RETURN_BINDING_NAME);
         }
         return ret;
     }
@@ -199,5 +206,40 @@ public class AnnotationHandlerImpl implements AnnotationHandler {
         } else {
             log.debug("No StorageAccount annotation found.");
         }
+    }
+
+    /**
+     * Validates that all bindings in a function have unique names, excluding system-reserved names.
+     * This validation applies to user-defined binding names to prevent conflicts.
+     * System names (defined in AzureFunctionsAnnotationConstants) are allowed to have duplicates.
+     * 
+     * @param bindings the list of bindings to validate
+     * @throws AzureExecutionException if duplicate user-defined binding names are found
+     */
+    protected void validateBindingNames(final List<Binding> bindings) throws AzureExecutionException {
+        final Set<String> seenNames = new HashSet<>();
+        
+        for (final Binding binding : bindings) {
+            final String bindingName = binding.getName();
+            // Skip validation for system-reserved names and null/empty names
+            if (bindingName != null && !bindingName.isEmpty() && !isSystemReservedName(bindingName)) {
+                if (!seenNames.add(bindingName)) {
+                    throw new AzureExecutionException(
+                        String.format("Duplicate binding name found: '%s'. All bindings within a function must have unique names.", 
+                                     bindingName));
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if a binding name is reserved by the system and allowed to have duplicates.
+     * 
+     * @param bindingName the name to check
+     * @return true if the name is system-reserved
+     */
+    private boolean isSystemReservedName(final String bindingName) {
+        // System-reserved names that are allowed to have duplicates
+        return SYSTEM_RETURN_BINDING_NAME.equals(bindingName);
     }
 }

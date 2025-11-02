@@ -1050,6 +1050,30 @@
           ]
         }
       ]
+    },
+    {
+      "type": "mcpToolTrigger",
+      "displayName": "$mcp_tool_trigger_displayName",
+      "direction": "trigger",
+      "enabledInTryMode": true,
+      "settings": [
+        {
+          "name": "toolName",
+          "value": "string",
+          "defaultValue": "MyMcpTool",
+          "required": true,
+          "label": "$mcp_tool_trigger_toolName_label",
+          "help": "$mcp_tool_trigger_toolName_help"
+        },
+        {
+          "name": "toolDescription",
+          "value": "string",
+          "defaultValue": "A simple MCP Tool that logs the message that is provided.",
+          "required": true,
+          "label": "$mcp_tool_trigger_toolDescription_label",
+          "help": "$mcp_tool_trigger_toolDescription_help"
+        }
+      ]
     }
   ]
 }
