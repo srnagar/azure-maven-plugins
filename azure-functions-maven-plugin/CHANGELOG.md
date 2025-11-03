@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to the "Maven Plugin for Azure Function" will be documented in this file.
 - [Change Log](#change-log)
+  - [1.40.0](#1400)
+  - [1.39.0](#1390)
   - [1.38.0](#1380)
   - [1.37.0](#1370)
   - [1.36.0](#1360)
@@ -30,6 +32,9 @@ All notable changes to the "Maven Plugin for Azure Function" will be documented 
   - [1.2.2](#122)
   - [1.2.1](#121)
   - [1.2.0](#120)
+
+## 1.40.0
+- Add support for `MCPTrigger`
 
 ## 1.39.0
 - Change default pricing tier to `Flex Consumption`
