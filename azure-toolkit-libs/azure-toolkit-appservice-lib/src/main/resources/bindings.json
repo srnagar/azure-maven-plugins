@@ -1114,6 +1114,22 @@
           "help": "$mcp_resource_trigger_mimeType_help"
         }
       ]
+    },
+    {
+      "type": "mcpMetadata",
+      "displayName": "$mcp_metadata_displayName",
+      "direction": "in",
+      "enabledInTryMode": true,
+      "settings": [
+        {
+          "name": "json",
+          "value": "string",
+          "defaultValue": "{}",
+          "required": true,
+          "label": "$mcp_metadata_json_label",
+          "help": "$mcp_metadata_json_help"
+        }
+      ]
     }
   ]
 }

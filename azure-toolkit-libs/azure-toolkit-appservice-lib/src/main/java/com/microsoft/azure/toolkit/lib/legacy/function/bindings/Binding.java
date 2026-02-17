@@ -31,6 +31,7 @@ public class Binding {
         requiredAttributeMap.put(BindingEnum.McpToolProperty, Arrays.asList("isRequired", "description"));
         requiredAttributeMap.put(BindingEnum.McpToolTrigger, Collections.singletonList("description"));
         requiredAttributeMap.put(BindingEnum.McpResourceTrigger, Arrays.asList("uri", "resourceName", "description"));
+        requiredAttributeMap.put(BindingEnum.McpMetadata, Collections.singletonList("json"));
     }
 
     public Binding(BindingEnum bindingEnum) {

@@ -244,6 +244,10 @@
     "mcp_resource_trigger_description_label": "MCP Resource Description",
     "mcp_resource_trigger_description_help": "A description of the MCP Resource.",
     "mcp_resource_trigger_mimeType_label": "MCP Resource MIME Type",
-    "mcp_resource_trigger_mimeType_help": "The MIME type of the MCP Resource (e.g., text/plain, image/png)."
+    "mcp_resource_trigger_mimeType_help": "The MIME type of the MCP Resource (e.g., text/plain, image/png).",
+
+    "mcp_metadata_displayName": "MCP Metadata",
+    "mcp_metadata_json_label": "MCP Metadata JSON",
+    "mcp_metadata_json_help": "A JSON string containing arbitrary metadata to attach to the MCP trigger. Surfaced in the _meta field of the MCP protocol."
   }
 }
