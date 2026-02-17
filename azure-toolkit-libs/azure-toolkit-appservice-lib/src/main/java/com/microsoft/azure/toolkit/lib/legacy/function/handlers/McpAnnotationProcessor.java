@@ -17,11 +17,12 @@ import java.util.Map;
 
 /**
  * Processor for handling MCP (Model Context Protocol) annotations in Azure Functions.
- * This class is responsible for processing McpToolTrigger and McpToolProperty annotations
- * and generating the appropriate binding configurations for function.json.
+ * This class is responsible for processing McpToolTrigger, McpToolProperty, and McpResourceTrigger
+ * annotations and generating the appropriate binding configurations for function.json.
  * 
  * McpToolTrigger annotations define tool invocation triggers with a toolName.
  * McpToolProperty annotations define tool properties that are aggregated into toolProperties JSON.
+ * McpResourceTrigger annotations define resource triggers that expose content via MCP.
  */
 public class McpAnnotationProcessor {
 
@@ -60,6 +61,8 @@ public class McpAnnotationProcessor {
             } else if (bindingType == BindingEnum.McpToolTrigger) {
                 patchMcpToolTrigger(binding);
                 mcpTriggers.add(binding);
+            } else if (bindingType == BindingEnum.McpResourceTrigger) {
+                patchMcpResourceTrigger(binding);
             }
         }
         
@@ -83,6 +86,20 @@ public class McpAnnotationProcessor {
         if (StringUtils.isNotEmpty(name)) {
             binding.setAttribute("toolName", name);
         }
+    }
+
+    /**
+     * Patches the McpResourceTrigger binding for function.json generation.
+     * The 'name' attribute from the Java annotation is the binding parameter name,
+     * not the resource name. The 'resourceName' and 'uri' attributes are already
+     * set directly from the annotation properties.
+     * 
+     * @param binding the binding to update
+     */
+    private static void patchMcpResourceTrigger(final Binding binding) {
+        // No patching needed for McpResourceTrigger — unlike McpToolTrigger where
+        // 'name' maps to 'toolName', the McpResourceTrigger annotation has explicit
+        // 'resourceName' and 'uri' properties that are already correctly named.
     }
 
     /**

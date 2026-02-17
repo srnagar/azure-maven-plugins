@@ -868,6 +868,32 @@
       "files": {
         "function.java": "package $packageName$;\n\nimport com.microsoft.azure.functions.ExecutionContext;\nimport com.microsoft.azure.functions.annotation.FunctionName;\nimport com.microsoft.azure.functions.annotation.McpToolProperty;\nimport com.microsoft.azure.functions.annotation.McpToolTrigger;\n\n/**\n * Demonstrates a simple Azure Function that prints a provided string and logs \\\"Hello, World!\\\".\n * This function is triggered by an MCP Tool Trigger, which provides the input JSON.\n */\npublic class $className$ {\n    /**\n     *\n     * @param toolArguments The JSON argument provided by the MCP tool. Extracted as a string.\n     * @param message       The message to be logged, provided as an MCP tool property.\n     * @param context       The execution context for logging and tracing function execution.\n     */\n    @FunctionName(\"$functionName$\")\n    public String logCustomTriggerInput(\n            @McpToolTrigger(\n                    name = \"$toolName$\",\n                    description = \"$toolDescription$\")\n            String toolArguments,\n            @McpToolProperty(\n                name = \"message\",\n                propertyType = \"string\",\n                description = \"The message to be logged.\",\n                isRequired = true)\n            String message,\n            final ExecutionContext context\n    ) {\n        context.getLogger().info(\"Hello, World!\");\n        // Log a simple message\n        context.getLogger().info(\"Message:\");\n        context.getLogger().info(message);\n\n        return \"Hello! I received and processed your message: '\" + message + \"'\";\n    }\n}\n"
       }
+    },
+    {
+      "id": "McpResourceTrigger-Java",
+      "metadata": {
+        "name": "McpResourceTrigger",
+        "description": "$McpResourceTrigger_description",
+        "defaultFunctionName": "mcpResourceTriggerJava",
+        "language": "Java",
+        "userPrompt": [
+          "uri",
+          "resourceName"
+        ]
+      },
+      "bundle": ["~4"],
+      "function": {
+        "disabled": false,
+        "bindings": [
+          {
+          "type": "mcpResourceTrigger",
+          "direction": "trigger"
+          }
+        ]
+      },
+      "files": {
+        "function.java": "package $packageName$;\n\nimport com.microsoft.azure.functions.ExecutionContext;\nimport com.microsoft.azure.functions.annotation.FunctionName;\nimport com.microsoft.azure.functions.annotation.McpResourceTrigger;\n\n/**\n * Demonstrates a simple Azure Function that exposes content as an MCP Resource.\n * This function is triggered when an MCP Client reads the resource.\n */\npublic class $className$ {\n    /**\n     *\n     * @param context           The resource invocation context JSON from the MCP trigger.\n     * @param executionContext   The execution context for logging.\n     * @return The text content of the resource.\n     */\n    @FunctionName(\"$functionName$\")\n    public String getResource(\n            @McpResourceTrigger(\n                    name = \"context\",\n                    uri = \"$uri$\",\n                    resourceName = \"$resourceName$\",\n                    description = \"An MCP Resource\",\n                    mimeType = \"text/plain\")\n            String context,\n            final ExecutionContext executionContext\n    ) {\n        executionContext.getLogger().info(\"MCP Resource trigger fired\");\n        return \"Hello from MCP Resource!\";\n    }\n}\n"
+      }
     }
   ]
 }

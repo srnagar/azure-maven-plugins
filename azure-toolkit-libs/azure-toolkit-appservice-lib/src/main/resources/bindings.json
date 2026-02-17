@@ -1074,6 +1074,46 @@
           "help": "$mcp_tool_trigger_toolDescription_help"
         }
       ]
+    },
+    {
+      "type": "mcpResourceTrigger",
+      "displayName": "$mcp_resource_trigger_displayName",
+      "direction": "trigger",
+      "enabledInTryMode": true,
+      "settings": [
+        {
+          "name": "uri",
+          "value": "string",
+          "defaultValue": "file://readme.md",
+          "required": true,
+          "label": "$mcp_resource_trigger_uri_label",
+          "help": "$mcp_resource_trigger_uri_help"
+        },
+        {
+          "name": "resourceName",
+          "value": "string",
+          "defaultValue": "MyResource",
+          "required": true,
+          "label": "$mcp_resource_trigger_resourceName_label",
+          "help": "$mcp_resource_trigger_resourceName_help"
+        },
+        {
+          "name": "description",
+          "value": "string",
+          "defaultValue": "A simple MCP Resource.",
+          "required": false,
+          "label": "$mcp_resource_trigger_description_label",
+          "help": "$mcp_resource_trigger_description_help"
+        },
+        {
+          "name": "mimeType",
+          "value": "string",
+          "defaultValue": "text/plain",
+          "required": false,
+          "label": "$mcp_resource_trigger_mimeType_label",
+          "help": "$mcp_resource_trigger_mimeType_help"
+        }
+      ]
     }
   ]
 }

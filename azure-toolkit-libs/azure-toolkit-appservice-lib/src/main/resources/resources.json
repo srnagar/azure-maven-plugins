@@ -233,6 +233,17 @@
     "mcp_tool_trigger_toolName_label": "MCP Tool Name",
     "mcp_tool_trigger_toolName_help": "The name of the MCP Tool.",
     "mcp_tool_trigger_toolDescription_label": "MCP Tool Description",
-    "mcp_tool_trigger_toolDescription_help": "A description of the MCP Tool's functionality."
+    "mcp_tool_trigger_toolDescription_help": "A description of the MCP Tool's functionality.",
+
+    "McpResourceTrigger_description": "A function that creates an MCP Resource exposed through a MCP Server managed by the platform and triggers when an MCP Client reads the resource.",
+    "mcp_resource_trigger_displayName": "MCP Resource Trigger",
+    "mcp_resource_trigger_uri_label": "MCP Resource URI",
+    "mcp_resource_trigger_uri_help": "The URI of the MCP Resource (e.g., file://readme.md).",
+    "mcp_resource_trigger_resourceName_label": "MCP Resource Name",
+    "mcp_resource_trigger_resourceName_help": "The display name of the MCP Resource.",
+    "mcp_resource_trigger_description_label": "MCP Resource Description",
+    "mcp_resource_trigger_description_help": "A description of the MCP Resource.",
+    "mcp_resource_trigger_mimeType_label": "MCP Resource MIME Type",
+    "mcp_resource_trigger_mimeType_help": "The MIME type of the MCP Resource (e.g., text/plain, image/png)."
   }
 }

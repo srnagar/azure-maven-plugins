@@ -11,6 +11,7 @@ public class AzureFunctionsAnnotationConstants {
     public static final String CUSTOM_BINDING = "com.microsoft.azure.functions.annotation.CustomBinding";
     public static final String MCP_TOOL_TRIGGER = "com.microsoft.azure.functions.annotation.McpToolTrigger";
     public static final String MCP_TOOL_PROPERTY = "com.microsoft.azure.functions.annotation.McpToolProperty";
+    public static final String MCP_RESOURCE_TRIGGER = "com.microsoft.azure.functions.annotation.McpResourceTrigger";
     public static final String FIXED_DELAY_RETRY = "com.microsoft.azure.functions.annotation.FixedDelayRetry";
     public static final String EXPONENTIAL_BACKOFF_RETRY = "com.microsoft.azure.functions.annotation.ExponentialBackoffRetry";
 

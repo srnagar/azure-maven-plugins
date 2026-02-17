@@ -25,6 +25,7 @@ public enum BindingEnum {
     KafkaOutput("kafka", Direction.OUT),
     McpToolTrigger("mcpToolTrigger", Direction.IN),
     McpToolProperty("mcpToolProperty", Direction.IN),
+    McpResourceTrigger("mcpResourceTrigger", Direction.IN),
     QueueTrigger("queueTrigger", Direction.IN, true),
     QueueOutput("queue", Direction.OUT, true),
     SendGridOutput("sendGrid", Direction.OUT),
