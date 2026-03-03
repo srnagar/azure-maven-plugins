@@ -17,11 +17,13 @@ import java.util.Map;
 
 /**
  * Processor for handling MCP (Model Context Protocol) annotations in Azure Functions.
- * This class is responsible for processing McpToolTrigger and McpToolProperty annotations
- * and generating the appropriate binding configurations for function.json.
+ * This class is responsible for processing McpToolTrigger, McpToolProperty, McpResourceTrigger,
+ * and McpMetadata annotations and generating the appropriate binding configurations for function.json.
  * 
  * McpToolTrigger annotations define tool invocation triggers with a toolName.
  * McpToolProperty annotations define tool properties that are aggregated into toolProperties JSON.
+ * McpResourceTrigger annotations define resource triggers that expose content via MCP.
+ * McpMetadata annotations attach arbitrary JSON metadata to a trigger, surfaced in the MCP protocol's _meta field.
  */
 public class McpAnnotationProcessor {
 
@@ -50,6 +52,7 @@ public class McpAnnotationProcessor {
         
         final List<Map<String, Object>> allProperties = new ArrayList<>();
         final List<Binding> mcpTriggers = new ArrayList<>();
+        final List<Binding> mcpMetadataBindings = new ArrayList<>();
         
         // Single pass: Process all bindings and categorize them
         for (final Binding binding : bindings) {
@@ -60,16 +63,30 @@ public class McpAnnotationProcessor {
             } else if (bindingType == BindingEnum.McpToolTrigger) {
                 patchMcpToolTrigger(binding);
                 mcpTriggers.add(binding);
+            } else if (bindingType == BindingEnum.McpResourceTrigger) {
+                patchMcpResourceTrigger(binding);
+                mcpTriggers.add(binding);
+            } else if (bindingType == BindingEnum.McpMetadata) {
+                mcpMetadataBindings.add(binding);
             }
         }
         
-        // Apply toolProperties to all triggers (only generate JSON once if needed)
-        if (!allProperties.isEmpty() && !mcpTriggers.isEmpty()) {
+        // Apply toolProperties to tool triggers (only generate JSON once if needed)
+        if (!allProperties.isEmpty()) {
             final String toolPropertiesJson = JsonUtils.toJson(allProperties);
             for (final Binding trigger : mcpTriggers) {
-                trigger.setAttribute("toolProperties", toolPropertiesJson);
+                if (trigger.getBindingEnum() == BindingEnum.McpToolTrigger) {
+                    trigger.setAttribute("toolProperties", toolPropertiesJson);
+                }
             }
         }
+
+        // Apply metadata from McpMetadata bindings to their associated triggers
+        applyMetadataToTriggers(mcpMetadataBindings, mcpTriggers);
+
+        // Remove McpMetadata bindings — they are not real bindings and should not
+        // appear in function.json as separate entries
+        bindings.removeAll(mcpMetadataBindings);
     }
 
     /**
@@ -83,6 +100,20 @@ public class McpAnnotationProcessor {
         if (StringUtils.isNotEmpty(name)) {
             binding.setAttribute("toolName", name);
         }
+    }
+
+    /**
+     * Patches the McpResourceTrigger binding for function.json generation.
+     * The 'name' attribute from the Java annotation is the binding parameter name,
+     * not the resource name. The 'resourceName' and 'uri' attributes are already
+     * set directly from the annotation properties.
+     * 
+     * @param binding the binding to update
+     */
+    private static void patchMcpResourceTrigger(final Binding binding) {
+        // No patching needed for McpResourceTrigger — unlike McpToolTrigger where
+        // 'name' maps to 'toolName', the McpResourceTrigger annotation has explicit
+        // 'resourceName' and 'uri' properties that are already correctly named.
     }
 
     /**
@@ -131,5 +162,43 @@ public class McpAnnotationProcessor {
         }
         
         return propertyAttributes;
+    }
+
+    /**
+     * Applies metadata from McpMetadata bindings to their associated trigger bindings.
+     * Each McpMetadata binding's {@code json} attribute is set as the {@code metadata}
+     * property on the trigger binding that shares the same parameter {@code name}.
+     * If only one trigger exists, all metadata is applied to it regardless of name matching.
+     *
+     * @param metadataBindings the list of McpMetadata bindings to process
+     * @param triggers the list of MCP trigger bindings to apply metadata to
+     */
+    private static void applyMetadataToTriggers(final List<Binding> metadataBindings,
+                                                 final List<Binding> triggers) {
+        if (metadataBindings.isEmpty() || triggers.isEmpty()) {
+            return;
+        }
+
+        for (final Binding metadata : metadataBindings) {
+            final String json = (String) metadata.getAttribute("json");
+            if (StringUtils.isEmpty(json)) {
+                continue;
+            }
+
+            final String metadataName = metadata.getName();
+
+            if (triggers.size() == 1) {
+                // Single trigger: apply metadata directly
+                triggers.get(0).setAttribute("metadata", json);
+            } else {
+                // Multiple triggers: match by parameter name
+                for (final Binding trigger : triggers) {
+                    if (StringUtils.equals(trigger.getName(), metadataName)) {
+                        trigger.setAttribute("metadata", json);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
